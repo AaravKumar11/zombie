@@ -1,7 +1,7 @@
 var score =0;
-var gun,zombie1,zombie2, bullet, backBoard, house;
+var player,zombie1,zombie2, bullet, backBoard, house;
 
-var gunImg,zombie1Img, bulletImg, blastImg, backBoardImg, zombie2Img, houseImg;
+var playerImg,zombie1Img, bulletImg, blastImg, backBoardImg, zombie2Img;
 
 var zombie2Group, bulletGroup, zombie1Group;
 
@@ -11,29 +11,30 @@ var score=0;
 var gameState=1
 
 function preload(){
-  gunImg = loadImage("gun1.png")
+  playerImg = loadImage("gun1.png")
   blastImg = loadImage("blast.png")
   bulletImg = loadImage("bullet1.png")
   zombie1Img = loadImage("zombie1.png")
   zombie2Img = loadImage("zombie2.png")
   backBoardImg= loadImage("back.jpg")
-  houseImg= loadImage("house.png")
+  //treeImg= loadImage("tree.jpg")
+
 }
 function setup() {
-  createCanvas(1000, 780);
+  createCanvas(1600, 780);
 
-  backBoard= createSprite(0,0,1000,780);
+  backBoard= createSprite(0,0,1600,780);
   backBoard.addImage(backBoardImg)
   backBoard.scale= 0
 
   
-  gun= createSprite(100, height/2, 50,50);
-  gun.addImage(gunImg)
-  gun.scale=0.05
+  player= createSprite(100, height/2, 50,50);
+  player.addImage(playerImg)
+  player.scale=0.04
   
-  house = createSprite(800,640,50,50)
-  house.addImage(houseImg)
-  house.scale=0.5
+  /*tree = createSprite(1100,640,50,50)
+  tree.addImage(treeImg)
+  tree.scale=0.5*/
   
   bulletGroup = createGroup();   
   zombie1Group = createGroup();   
@@ -41,11 +42,15 @@ function setup() {
   
   heading= createElement("h1");
   scoreboard= createElement("h1");
+
+  house=createSprite(920,500,350,100);
+  house.visible=false
 }
 
 function draw() {
+ 
   background("#BDA297");
-  image(backBoardImg,0,0,1000,780)
+  image(backBoardImg,0,0,1600,780)
   heading.html("Life: "+life)
   heading.style('color:red'); 
   heading.position(150,20)
@@ -55,7 +60,17 @@ function draw() {
   scoreboard.position(width-200,20)
 
   if(gameState===1){
-    gun.y=mouseY  
+    player.y=mouseY  
+    
+    if(keyDown(RIGHT_ARROW)){
+      player.x=player.x+1;
+
+    }
+
+    if(keyDown(LEFT_ARROW)){
+      player.x=player.x-1;
+
+    }
 
     if (frameCount % 80 === 0) {
       drawzombie1();
@@ -86,10 +101,12 @@ function draw() {
       handlezombieCollision(zombie2Group);
     }
 
+    if (player.isTouching(house)) {
+      handleGamewin()
+    }
     drawSprites();
   }
-    
-  
+
 }
 
 function drawzombie1(){
@@ -110,8 +127,8 @@ function drawzombie2(){
 }
 
 function shootBullet(){
-  bullet= createSprite(150, width/2, 50,20)
-  bullet.y= gun.y-20
+  bullet= createSprite(player.x, player.y, 50,20)
+  bullet.y= player.y-20
   bullet.addImage(bulletImg)
   bullet.scale=0.12
   bullet.velocityX= 7
@@ -125,24 +142,17 @@ function handlezombieCollision(zombieGroup){
 
      blast= createSprite(bullet.x+60, bullet.y, 50,50);
     blast.addImage(blastImg) 
-
-  
-
-    
-
-   
-    
     blast.scale=0.3
     blast.life=20
     bulletGroup.destroyEach()
     zombieGroup.destroyEach()
 }
-
 function handleGameover(zombieGroup){
   
     life=life-1;
-    zombieGroup.destroyEach();
-    
+    zombie1Group.destroyEach();
+    zombie2Group.destroyEach();
+   
 
     if (life === 0) {
       gameState=2
@@ -158,4 +168,27 @@ function handleGameover(zombieGroup){
       });
     }
   
+}
+
+function handleGamewin(){
+  
+  zombie1Group.destroyEach();
+  zombie2Group.destroyEach();
+  player.destroy();
+  
+
+  
+    gameState=2
+    
+    swal({
+      title: `Game Won`,
+      text: "You won the game....!!!",
+      text: "Your Score is " + score,
+      imageUrl:
+        "https://cdn.shopify.com/s/files/1/1061/1924/products/Thumbs_Up_Sign_Emoji_Icon_ios10_grande.png",
+      imageSize: "100x100",
+      confirmButtonText: "Thanks For Playing"
+    });
+  
+
 }
