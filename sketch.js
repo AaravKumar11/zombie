@@ -1,7 +1,7 @@
 var score =0;
-var player,zombie1,zombie2, bullet, backBoard, house;
+var player,zombie1,zombie2, bullet, backBoard, house, gameOverSound, gameWonSound, shotSound, bgSound,lifeSound,reset ;
 
-var playerImg,zombie1Img, bulletImg, blastImg, backBoardImg, zombie2Img;
+var playerImg,zombie1Img, bulletImg, blastImg, backBoardImg, zombie2Img, resetImg;
 
 var zombie2Group, bulletGroup, zombie1Group;
 
@@ -18,11 +18,18 @@ function preload(){
   zombie2Img = loadImage("zombie2.png")
   backBoardImg= loadImage("back.jpg")
   //treeImg= loadImage("tree.jpg")
+  gameOverSound= loadSound("YouLose.mp3")
+  gameWonSound= loadSound("win.mp3")
+  shotSound= loadSound("shot.mp4")
+  bgSound=loadSound("hum.mp3")
+  lifeSound=loadSound("losing.mp3")
+  resetImg= loadImage("reset.png")
+
 
 }
 function setup() {
   createCanvas(1600, 780);
-
+  
   backBoard= createSprite(0,0,1600,780);
   backBoard.addImage(backBoardImg)
   backBoard.scale= 0
@@ -45,12 +52,17 @@ function setup() {
 
   house=createSprite(920,500,350,100);
   house.visible=false
+
+  reset = createSprite(50,50)
+  reset.addImage(resetImg)
+  reset.visible=false
 }
 
 function draw() {
  
   background("#BDA297");
   image(backBoardImg,0,0,1600,780)
+
   heading.html("Life: "+life)
   heading.style('color:red'); 
   heading.position(150,20)
@@ -82,14 +94,17 @@ function draw() {
 
     if(keyDown("space")){
       shootBullet();
+      shotSound.play()
     }
 
-    if (zombie1Group.collide(backBoard)){
+    if (zombie1Group.collide(player)){
       handleGameover(zombie1Group);
+      lifeSound.play()
     }
     
-    if (zombie2Group.collide(backBoard)) {
+    if (zombie2Group.collide(player)) {
       handleGameover(zombie2Group);
+      lifeSound.play()
     }
     
     
@@ -103,6 +118,7 @@ function draw() {
 
     if (player.isTouching(house)) {
       handleGamewin()
+      gameWonSound.play()
     }
     drawSprites();
   }
@@ -152,10 +168,12 @@ function handleGameover(zombieGroup){
     life=life-1;
     zombie1Group.destroyEach();
     zombie2Group.destroyEach();
+    
    
 
     if (life === 0) {
       gameState=2
+      gameOverSound.play()
       
       swal({
         title: `Game Over`,
@@ -176,7 +194,7 @@ function handleGamewin(){
   zombie2Group.destroyEach();
   player.destroy();
   
-
+  
   
     gameState=2
     
@@ -188,7 +206,8 @@ function handleGamewin(){
         "https://cdn.shopify.com/s/files/1/1061/1924/products/Thumbs_Up_Sign_Emoji_Icon_ios10_grande.png",
       imageSize: "100x100",
       confirmButtonText: "Thanks For Playing"
+      
     });
-  
+    
 
 }
