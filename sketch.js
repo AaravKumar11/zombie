@@ -182,8 +182,14 @@ function handleGameover(zombieGroup){
         imageUrl:
           "https://cdn.shopify.com/s/files/1/1061/1924/products/Thumbs_Down_Sign_Emoji_Icon_ios10_grande.png",
         imageSize: "100x100",
-        confirmButtonText: "Thanks For Playing"
-      });
+        confirmButtonText: "Play Again"
+      },
+      function (isConfirm){
+        if (isConfirm) {
+          location.reload()
+        }
+      }
+      );
     }
   
 }
@@ -205,9 +211,15 @@ function handleGamewin(){
       imageUrl:
         "https://cdn.shopify.com/s/files/1/1061/1924/products/Thumbs_Up_Sign_Emoji_Icon_ios10_grande.png",
       imageSize: "100x100",
-      confirmButtonText: "Thanks For Playing"
+      confirmButtonText: "Thanks for playing,play again"
       
-    });
+    },
+    function (isConfirm){
+      if (isConfirm) {
+        location.reload()
+      }
+    }
+    );
     
 
 }
